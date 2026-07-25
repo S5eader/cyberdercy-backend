@@ -2,22 +2,26 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 import os
-from urllib.parse import quote_plus
 
 
 load_dotenv()
 
 
-DB_USER = "postgres"
-DB_PASSWORD = quote_plus("CyberDercy@2026")
-DB_HOST = "localhost"
-DB_PORT = "5432"
-DB_NAME = "ultimate_manager"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
-DATABASE_URL = (
-    f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set")
+
+
+# Render PostgreSQL uses postgres:// sometimes
+# SQLAlchemy requires postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
 
 
 engine = create_engine(
@@ -37,9 +41,13 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 
+
 def get_db():
+
     db = SessionLocal()
+
     try:
         yield db
+
     finally:
         db.close()
