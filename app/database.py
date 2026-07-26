@@ -14,8 +14,7 @@ if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set")
 
 
-# Render PostgreSQL uses postgres:// sometimes
-# SQLAlchemy requires postgresql://
+# Convert Render postgres URL format if needed
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace(
         "postgres://",
@@ -39,7 +38,6 @@ SessionLocal = sessionmaker(
 
 
 Base = declarative_base()
-
 
 
 def get_db():
