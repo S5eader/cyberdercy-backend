@@ -14,7 +14,6 @@ if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set")
 
 
-# Convert Render postgres URL format if needed
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace(
         "postgres://",
